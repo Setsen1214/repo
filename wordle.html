@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Simple Wordle</title>
+    <link rel="stylesheet" href="wordle.css">
+</head>
+
+<body>
+
+    <h1>Wordle</h1>
+
+    <div id="board"></div>
+
+    <div id="keyboard">
+        <button onclick="press('Q')">Q</button>
+        <button onclick="press('W')">W</button>
+        <button onclick="press('E')">E</button>
+        <button onclick="press('R')">R</button>
+        <button onclick="press('T')">T</button>
+        <button onclick="press('Y')">Y</button>
+        <button onclick="press('U')">U</button>
+        <button onclick="press('I')">I</button>
+        <button onclick="press('O')">O</button>
+        <button onclick="press('P')">P</button><br>
+
+        <button onclick="press('A')">A</button>
+        <button onclick="press('S')">S</button>
+        <button onclick="press('D')">D</button>
+        <button onclick="press('F')">F</button>
+        <button onclick="press('G')">G</button>
+        <button onclick="press('H')">H</button>
+        <button onclick="press('J')">J</button>
+        <button onclick="press('K')">K</button>
+        <button onclick="press('L')">L</button><br>
+
+        <button onclick="check()">ENTER</button>
+
+        <button onclick="press('Z')">Z</button>
+        <button onclick="press('X')">X</button>
+        <button onclick="press('C')">C</button>
+        <button onclick="press('V')">V</button>
+        <button onclick="press('B')">B</button>
+        <button onclick="press('N')">N</button>
+        <button onclick="press('M')">M</button>
+
+        <button onclick="removeLetter()">⌫</button>
+    </div>
+
+    <script src="wordle.js"></script>
+
+</body>
+
+</html>
