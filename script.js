@@ -1,150 +1,289 @@
-// // Numbers (each appears twice)
-// let numbers = [1, 2, 3, 4, 5, 6, 7, 8];
-// let cards = [...numbers, ...numbers];
+// const input = document.getElementById("taskInput");
+// const addBtn = document.getElementById("addBtn");
+// const taskList = document.getElementById("taskList");
+// const filters = document.querySelectorAll(".filter");
+// const count = document.getElementById("count");
+// const clearBtn = document.getElementById("clearBtn");
 
-// // Shuffle
-// cards.sort(() => Math.random() - 0.5);
+// let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-// let game = document.getElementById("game");
+// let currentFilter = "all";
 
-// let firstCard = null;
-// let secondCard = null;
-// let lock = false;
-// let matchedPairs = 0;
+// function save() {
 
+//     localStorage.setItem("tasks", JSON.stringify(tasks));
 
-// cards.forEach(number => {
+// }
 
-//     let card = document.createElement("div");
-//     card.classList.add("card", "hidden");
-//     card.textContent = number;
+// function render() {
 
-//     card.addEventListener("click", function () {
+//     taskList.innerHTML = "";
 
+//     let filtered = tasks;
 
-//         if (lock) return;
-//         if (!card.classList.contains("hidden")) return;
+//     if (currentFilter === "active") {
 
+//         filtered = tasks.filter(task => !task.completed);
 
-//         card.classList.remove("hidden");
+//     }
 
-//         if (firstCard == null) {
+//     if (currentFilter === "completed") {
 
-//             firstCard = card;
+//         filtered = tasks.filter(task => task.completed);
 
-//         } else {
+//     }
 
-//             secondCard = card;
-//             lock = true;
+//     filtered.forEach((task, index) => {
 
+//         const div = document.createElement("div");
 
-//             if (firstCard.textContent === secondCard.textContent) {
+//         div.className = "task";
 
-//                 matchedPairs++;
+//         div.innerHTML = `
 
-//                 setTimeout(function () {
+// <div class="left">
 
-//                     firstCard.classList.add("gone");
-//                     secondCard.classList.add("gone");
+// <input
+// type="checkbox"
+// ${task.completed ? "checked" : ""}
+// >
 
-//                     firstCard = null;
-//                     secondCard = null;
-//                     lock = false;
+// <span class="${task.completed ? "completed" : ""}">
+// ${task.text}
+// </span>
 
-//                     if (matchedPairs === 8) {
-//                         alert("🎉 You Win!");
-//                     }
+// </div>
 
-//                 }, 500);
+// <button class="delete">
+// Delete
+// </button>
 
-//             } else {
+// `;
 
+//         const checkbox = div.querySelector("input");
 
-//                 setTimeout(function () {
+//         checkbox.addEventListener("change", () => {
 
-//                     firstCard.classList.add("hidden");
-//                     secondCard.classList.add("hidden");
+//             task.completed = !task.completed;
 
-//                     firstCard = null;
-//                     secondCard = null;
-//                     lock = false;
+//             save();
 
-//                 }, 1000);
+//             render();
 
-//             }
-//         }
+//         });
+
+//         const del = div.querySelector(".delete");
+
+//         del.addEventListener("click", () => {
+
+//             tasks.splice(index, 1);
+
+//             save();
+
+//             render();
+
+//         });
+
+//         taskList.appendChild(div);
 
 //     });
 
-//     game.appendChild(card);
+//     const completed = tasks.filter(task => task.completed).length;
+
+//     count.textContent = `${completed} of ${tasks.length} tasks completed`;
+
+// }
+
+// addBtn.addEventListener("click", () => {
+
+//     const text = input.value.trim();
+
+//     if (text === "") return;
+
+//     tasks.push({
+
+//         text,
+
+//         completed: false
+
+//     });
+
+//     input.value = "";
+
+//     save();
+
+//     render();
 
 // });
 
-const board = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7];
+// input.addEventListener("keypress", (e) => {
 
-board.sort(() => Math.random() - 0.5);
+//     if (e.key === "Enter") {
 
-const boxes = document.querySelectorAll(".box");
+//         addBtn.click();
 
-let openIndex = [];
-let lockBoard = false;
-let matches = 0;
+//     }
 
-for (let i = 0; i < boxes.length; i++) {
+// });
 
-    boxes[i].addEventListener("click", () => {
+// filters.forEach(btn => {
 
-        if (lockBoard) return;
+//     btn.addEventListener("click", () => {
 
-        if (openIndex.includes(i)) return;
+//         filters.forEach(b => b.classList.remove("active"));
 
-        if (boxes[i].textContent !== "") return;
+//         btn.classList.add("active");
 
-        if (openIndex.length < 2) {
+//         currentFilter = btn.dataset.filter;
 
-            boxes[i].textContent = board[i];
-            openIndex.push(i);
+//         render();
 
+//     });
+
+// });
+
+// clearBtn.addEventListener("click", () => {
+
+//     tasks = tasks.filter(task => !task.completed);
+
+//     save();
+
+//     render();
+
+// });
+
+// render();
+
+let tasks = [];
+
+let input = document.getElementById("taskInput");
+let addButton = document.getElementById("addBtn");
+let taskList = document.getElementById("taskList");
+let count = document.getElementById("count");
+let clearButton = document.getElementById("clearBtn");
+let filterButtons = document.querySelectorAll(".filter");
+
+let currentFilter = "all";
+
+addButton.addEventListener("click", addTask);
+
+function addTask() {
+    let text = input.value.trim();
+
+    if (text === "") {
+        alert("Please enter a task");
+        return;
+    }
+
+    let task = {
+        text: text,
+        completed: false
+    };
+
+    tasks.push(task);
+    input.value = "";
+    displayTasks();
+}
+
+function getFilteredTasks() {
+    if (currentFilter === "active") {
+        return tasks.filter(function (task) {
+            return !task.completed;
+        });
+    }
+
+    if (currentFilter === "completed") {
+        return tasks.filter(function (task) {
+            return task.completed;
+        });
+    }
+
+    return tasks;
+}
+
+function displayTasks() {
+    taskList.innerHTML = "";
+
+    let completedCount = 0;
+    let visibleTasks = getFilteredTasks();
+
+    for (let i = 0; i < visibleTasks.length; i++) {
+        let task = visibleTasks[i];
+        let taskIndex = tasks.indexOf(task);
+
+        let taskDiv = document.createElement("div");
+        taskDiv.className = "task";
+
+        let left = document.createElement("div");
+        left.className = "left";
+
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = task.completed;
+
+        checkbox.addEventListener("change", function () {
+            tasks[taskIndex].completed = checkbox.checked;
+            displayTasks();
+        });
+
+        let text = document.createElement("span");
+        text.innerText = task.text;
+
+        if (task.completed) {
+            text.className = "completed";
+            completedCount++;
         }
 
-        if (openIndex.length === 2) {
+        let deleteButton = document.createElement("button");
+        deleteButton.innerText = "Delete";
 
-            lockBoard = true;
+        deleteButton.addEventListener("click", function () {
+            tasks.splice(taskIndex, 1);
+            displayTasks();
+        });
 
-            const [a, b] = openIndex;
+        left.appendChild(checkbox);
+        left.appendChild(text);
 
-            if (board[a] === board[b]) {
+        taskDiv.appendChild(left);
+        taskDiv.appendChild(deleteButton);
 
-                matches++;
+        taskList.appendChild(taskDiv);
+    }
 
-                boxes[a].style.background = "green";
-                boxes[b].style.background = "green";
+    count.innerText =
+        completedCount +
+        " of " +
+        tasks.length +
+        " tasks completed";
+}
 
-                openIndex = [];
-                lockBoard = false;
+input.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        addTask();
+    }
+});
 
-                if (matches === board.length / 2) {
-                    setTimeout(() => {
-                        alert("You Win!");
-                    }, 300);
-                }
+filterButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+        filterButtons.forEach(function (btn) {
+            btn.classList.remove("active");
+        });
 
-            } else {
+        button.classList.add("active");
+        currentFilter = button.dataset.filter;
+        displayTasks();
+    });
+});
 
-                setTimeout(() => {
+clearButton.addEventListener("click", clearCompleted);
 
-                    boxes[a].textContent = "";
-                    boxes[b].textContent = "";
-
-                    openIndex = [];
-                    lockBoard = false;
-
-                }, 1000);
-
-            }
-
-        }
-
+function clearCompleted() {
+    tasks = tasks.filter(function (task) {
+        return !task.completed;
     });
 
+    displayTasks();
 }
+
+displayTasks();
